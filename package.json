@@ -1,0 +1,26 @@
+{
+  "name": "redux-whathappend",
+  "version": "1.0.0",
+  "description": "Redux middleware, that records user's actions and exports into a file, that can be exported for further debugging",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/max-prokopenko/redux-whathappend.git"
+  },
+  "keywords": [
+    "redux",
+    "logger",
+    "debug",
+    "react",
+    "middleware"
+  ],
+  "author": "Max Prokopenko",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/max-prokopenko/redux-whathappend/issues"
+  },
+  "homepage": "https://github.com/max-prokopenko/redux-whathappend#readme"
+}
