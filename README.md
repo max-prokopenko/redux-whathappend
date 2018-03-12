@@ -18,10 +18,10 @@ Redux middleware, that records user's actions and exports into a file, that can 
 import { applyMiddleware, createStore } from 'redux';
 
 // apply redux-whathappend
-import redux-whathappend from 'redux-whathappend'
+import whathappend from 'redux-whathappend'
 const store = createStore(
   reducer,
-  applyMiddleware(redux-whathappend)
+  applyMiddleware(whathappend)
 )
 ```
 
