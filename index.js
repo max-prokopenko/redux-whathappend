@@ -1,80 +1,45 @@
+const deep = require('deep-diff'); 
 const logReport = [];
 
+export function render(diff) {
+  const { kind, path, lhs, rhs, index, item } = diff;
 
-const deepDiffMapper = function() {
-  return {
-      VALUE_CREATED: 'created',
-      VALUE_UPDATED: 'updated',
-      VALUE_DELETED: 'deleted',
-      VALUE_UNCHANGED: 'unchanged',
-      map: function(obj1, obj2) {
-          if (this.isFunction(obj1) || this.isFunction(obj2)) {
-              throw 'Invalid argument. Function given, object expected.';
-          }
-          if (this.isValue(obj1) || this.isValue(obj2)) {
-              return {
-                  type: this.compareValues(obj1, obj2),
-                  data: (obj1 === undefined) ? obj2 : obj1
-              };
-          }
-
-          var diff = {};
-          for (var key in obj1) {
-              if (this.isFunction(obj1[key])) {
-                  continue;
-              }
-
-              var value2 = undefined;
-              if ('undefined' != typeof(obj2[key])) {
-                  value2 = obj2[key];
-              }
-
-              diff[key] = this.map(obj1[key], value2);
-          }
-          for (var key in obj2) {
-              if (this.isFunction(obj2[key]) || ('undefined' != typeof(diff[key]))) {
-                  continue;
-              }
-
-              diff[key] = this.map(undefined, obj2[key]);
-          }
-
-          return diff;
-
-      },
-      compareValues: function(value1, value2) {
-          if (value1 === value2) {
-              return this.VALUE_UNCHANGED;
-          }
-          if (this.isDate(value1) && this.isDate(value2) && value1.getTime() === value2.getTime()) {
-              return this.VALUE_UNCHANGED;
-          }
-          if ('undefined' == typeof(value1)) {
-              return this.VALUE_CREATED;
-          }
-          if ('undefined' == typeof(value2)) {
-              return this.VALUE_DELETED;
-          }
-
-          return this.VALUE_UPDATED;
-      },
-      isFunction: function(obj) {
-          return {}.toString.apply(obj) === '[object Function]';
-      },
-      isArray: function(obj) {
-          return {}.toString.apply(obj) === '[object Array]';
-      },
-      isDate: function(obj) {
-          return {}.toString.apply(obj) === '[object Date]';
-      },
-      isObject: function(obj) {
-          return {}.toString.apply(obj) === '[object Object]';
-      },
-      isValue: function(obj) {
-          return !this.isObject(obj) && !this.isArray(obj);
-      }
+  switch (kind) {
+    case 'E':
+      return [path.join('.'), lhs, '→', rhs];
+    case 'N':
+      return [path.join('.'), rhs];
+    case 'D':
+      return [path.join('.')];
+    case 'A':
+      return [`${path.join('.')}[${index}]`, item];
+    default:
+      return [];
   }
-}();
+}
+
+const dictionary = {
+  E: {
+    color: '#2196F3',
+    text: 'CHANGED:',
+  },
+  N: {
+    color: '#4CAF50',
+    text: 'ADDED:',
+  },
+  D: {
+    color: '#F44336',
+    text: 'DELETED:',
+  },
+  A: {
+    color: '#2196F3',
+    text: 'ARRAY:',
+  },
+};
+
+export function style(kind) {
+  return `color: ${dictionary[kind].color}; font-weight: bold`;
+}
 
 const whatHappendMiddleware = store => next => (action) => {
   if((!process.env.NODE_ENV || process.env.NODE_ENV === 'development')) {
@@ -91,7 +56,17 @@ const whatHappendMiddleware = store => next => (action) => {
     happends.action = action;
     next(action);
     const next_state = store.getState();
-    happends.diff = deepDiffMapper.map(prev_state, next_state)
+    const diff = differ(prev_state, next_state);
+    if (diff) {
+      diff.forEach((elem) => {
+        const { kind } = elem;
+        const output = render(elem);
+        happends.diff = output;        
+      });
+    } else {
+      happends.diff = '—— no diff ——';
+    }
+    // happends.diff =
     logReport.push(happends);
   }
 };
