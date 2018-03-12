@@ -61,7 +61,6 @@ const whatHappendMiddleware = store => next => (action) => {
       diff.forEach((elem) => {
         const { kind } = elem;
         const output = render(elem);
-        console.log(output);
         let change = "";
         for(let i = 1; i < output.length; i++) {
           change = change + JSON.stringify(output[i]);
@@ -73,8 +72,7 @@ const whatHappendMiddleware = store => next => (action) => {
           type: dictionary[kind].text,
           changed: output[0],
           change: change
-        }
-        console.log(happends.diff);
+        }        
       });
     } else {
       
