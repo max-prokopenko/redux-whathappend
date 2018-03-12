@@ -4,7 +4,6 @@ Redux middleware, that records user's actions and exports into a file, that can 
 ## Table of contents
 * [Install](#install)
 * [Usage](#usage)
-* [Usage](#usage)
 * [License](#license)
 
 ## Install
