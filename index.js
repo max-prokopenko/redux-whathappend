@@ -1,4 +1,4 @@
-const deep = require('deep-diff'); 
+const differ = require('deep-diff'); 
 const logReport = [];
 
 export function render(diff) {
@@ -61,12 +61,24 @@ const whatHappendMiddleware = store => next => (action) => {
       diff.forEach((elem) => {
         const { kind } = elem;
         const output = render(elem);
-        happends.diff = output;        
+        console.log(output);
+        let change = "";
+        for(let i = 1; i < output.length; i++) {
+          change = change + JSON.stringify(output[i]);
+        }
+        if(kind == 'A') {
+          change = JSON.stringify(output[1].rhs);
+        }
+        happends.diff = {
+          type: dictionary[kind].text,
+          changed: output[0],
+          change: change
+        }
+        console.log(happends.diff);
       });
     } else {
-      happends.diff = '—— no diff ——';
+      
     }
-    // happends.diff =
     logReport.push(happends);
   }
 };
