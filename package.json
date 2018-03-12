@@ -1,6 +1,6 @@
 {
   "name": "redux-whathappend",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Redux middleware, that records user's actions and saves into a file, that can be exported for further debugging",
   "main": "index.js",
   "scripts": {
